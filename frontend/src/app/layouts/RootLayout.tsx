@@ -9,7 +9,6 @@ import {
   DollarSign,
   TrendingUp,
   GraduationCap,
-  FileCheck,
   BarChart3,
   Shield,
   Workflow,
@@ -21,7 +20,6 @@ import {
   X,
   Sun,
   Moon,
-  Bell,
   MessageSquare,
   ChevronDown,
   Briefcase,
@@ -44,21 +42,14 @@ import { Avatar, AvatarFallback } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
 import { AIChatbot } from "../components/AIChatbot";
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
-
-const roles = [
-  "Super Admin",
-  "Tenant Admin",
-  "HR Executive",
-  "Payroll Manager",
-  "Department Manager",
-  "Employee",
-  "Auditor",
-];
+import { NotificationCenter } from "../components/NotificationCenter";
 
 import { useAuth } from "../../contexts/AuthContext";
+import { useNotifications } from "../../contexts/NotificationsContext";
 
 export function RootLayout() {
   const { user, logout, loginAsRole } = useAuth();
+  const { notifications, markAllRead, markRead } = useNotifications();
   const location = useLocation();
   const { theme, setTheme } = useTheme();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -81,7 +72,7 @@ export function RootLayout() {
         { name: "CHRO Dashboard", href: "/", icon: LayoutDashboard, roles: ["Super Admin", "Tenant Admin", "CHRO"] },
         { name: "Global Analytics", href: "/analytics", icon: BarChart3, roles: ["Super Admin", "Tenant Admin", "CHRO", "HR Executive"] },
         { name: "People Sustainability", href: "/dei", icon: TrendingUp, roles: ["Super Admin", "Tenant Admin", "HR Executive"] },
-      ]
+      ],
     },
     {
       name: "Talent Lifecycle",
@@ -90,7 +81,7 @@ export function RootLayout() {
         { name: "L&D Academy", href: "/learning", icon: GraduationCap, roles: ["all"] },
         { name: "Performance & HiPo", href: "/performance", icon: Award, roles: ["Super Admin", "Tenant Admin", "HR Executive", "Department Manager"] },
         { name: "Succession Planning", href: "/talent-management", icon: Briefcase, roles: ["Super Admin", "Tenant Admin", "HR Executive"] },
-      ]
+      ],
     },
     {
       name: "Operational HR",
@@ -98,7 +89,7 @@ export function RootLayout() {
         { name: "Employee 360", href: "/employees", icon: Users, roles: ["Super Admin", "Tenant Admin", "HR Executive", "Department Manager"] },
         { name: "HR Operations", href: "/hr-ops", icon: Workflow, roles: ["Super Admin", "Tenant Admin", "HR Executive"] },
         { name: "Attendance & Leave", href: "/attendance", icon: Calendar, roles: ["all"] },
-      ]
+      ],
     },
     {
       name: "Comp & Benefits",
@@ -106,7 +97,7 @@ export function RootLayout() {
         { name: "Payroll Engine", href: "/payroll", icon: DollarSign, roles: ["Super Admin", "Tenant Admin", "Payroll Manager"] },
         { name: "Statutory Compliance", href: "/payroll/compliance", icon: Shield, roles: ["Super Admin", "Tenant Admin", "Payroll Manager"] },
         { name: "Incentive Simulation", href: "/incentives", icon: TrendingUp, roles: ["Super Admin", "Tenant Admin", "Payroll Manager", "Sales Manager"] },
-      ]
+      ],
     },
     {
       name: "Manufacturing & IR",
@@ -115,14 +106,14 @@ export function RootLayout() {
         { name: "Shift & Fatigue AI", href: "/shift-management", icon: Clock, roles: ["Super Admin", "Tenant Admin", "HR Executive", "Plant Manager"] },
         { name: "Industrial Relations", href: "/ir", icon: MessageSquare, roles: ["Super Admin", "Tenant Admin", "HR Executive", "Plant Manager"] },
         { name: "Contract Labor", href: "/contract-labor", icon: UserCog, roles: ["Super Admin", "Tenant Admin", "HR Executive", "Plant Manager"] },
-      ]
+      ],
     },
     {
       name: "Sales HR",
       items: [
         { name: "Field Workforce", href: "/field-sales", icon: MapPin, roles: ["Super Admin", "Tenant Admin", "HR Executive", "Sales Manager"] },
         { name: "Zonal Performance", href: "/zonal-sales", icon: TrendingUp, roles: ["Super Admin", "Tenant Admin", "Sales Manager"] },
-      ]
+      ],
     },
     {
       name: "AI & Technology",
@@ -130,7 +121,7 @@ export function RootLayout() {
         { name: "AI Control Center", href: "/ai-control", icon: Brain, roles: ["Super Admin", "Tenant Admin"] },
         { name: "HRIS & Data (Snowflake)", href: "/hris", icon: Building2, roles: ["Super Admin", "Tenant Admin"] },
         { name: "Audit & Risk", href: "/audit", icon: FileText, roles: ["Super Admin", "Tenant Admin", "Auditor"] },
-      ]
+      ],
     },
     {
       name: "Organization",
@@ -138,24 +129,23 @@ export function RootLayout() {
         { name: "Business Units", href: "/business-units", icon: Building2, roles: ["Super Admin", "Tenant Admin"] },
         { name: "Departments", href: "/departments", icon: Building2, roles: ["Super Admin", "Tenant Admin", "HR Executive"] },
         { name: "RBAC & Security", href: "/rbac", icon: Shield, roles: ["Super Admin", "Tenant Admin"] },
+        { name: "Notifications", href: "/notifications", icon: MessageSquare, roles: ["all"] },
         { name: "Settings", href: "/settings", icon: Settings, roles: ["all"] },
-      ]
+      ],
     },
   ];
 
-  const filteredNavigation = navigation.map(group => ({
-    ...group,
-    items: group.items.filter(item =>
-      item.roles.includes("all") || item.roles.includes(currentRole)
-    )
-  })).filter(group => group.items.length > 0);
+  const filteredNavigation = navigation
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => item.roles.includes("all") || item.roles.includes(currentRole)),
+    }))
+    .filter((group) => group.items.length > 0);
 
   return (
     <div className="h-screen flex overflow-hidden bg-background">
-      {/* Sidebar */}
       <aside
-        className={`${isSidebarOpen ? "w-64" : "w-0"
-          } bg-sidebar border-r border-sidebar-border transition-all duration-300 overflow-hidden flex flex-col`}
+        className={`${isSidebarOpen ? "w-64" : "w-0"} bg-sidebar border-r border-sidebar-border transition-all duration-300 overflow-hidden flex flex-col`}
       >
         <div className="p-6 border-b border-sidebar-border">
           <div className="flex items-center gap-2">
@@ -181,10 +171,11 @@ export function RootLayout() {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${isActive
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                      }`}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                      isActive
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    }`}
                   >
                     <item.icon className="size-4" />
                     <span>{item.name}</span>
@@ -208,26 +199,15 @@ export function RootLayout() {
         </div>
       </aside>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
         <header className="h-16 border-b border-border bg-card px-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            >
-              {isSidebarOpen ? (
-                <X className="size-5" />
-              ) : (
-                <Menu className="size-5" />
-              )}
+            <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+              {isSidebarOpen ? <X className="size-5" /> : <Menu className="size-5" />}
             </Button>
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Role Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2">
@@ -240,10 +220,7 @@ export function RootLayout() {
                 <DropdownMenuLabel>Switch Role</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {roles.map((role) => (
-                  <DropdownMenuItem
-                    key={role}
-                    onClick={() => loginAsRole(role.toLowerCase().replace(" ", "_"))}
-                  >
+                  <DropdownMenuItem key={role} onClick={() => loginAsRole(role.toLowerCase().replace(" ", "_"))}>
                     {role}
                     {currentRole === role && (
                       <Badge variant="secondary" className="ml-auto">
@@ -255,29 +232,14 @@ export function RootLayout() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Language Switcher */}
             <LanguageSwitcher />
 
-            {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            >
-              {theme === "dark" ? (
-                <Sun className="size-5" />
-              ) : (
-                <Moon className="size-5" />
-              )}
+            <Button variant="ghost" size="icon" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+              {theme === "dark" ? <Sun className="size-5" /> : <Moon className="size-5" />}
             </Button>
 
-            {/* Notifications */}
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="size-5" />
-              <span className="absolute top-2 right-2 size-2 bg-destructive rounded-full" />
-            </Button>
+            <NotificationCenter notifications={notifications} onMarkAllRead={markAllRead} onItemOpen={markRead} />
 
-            {/* User Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="gap-2">
@@ -286,9 +248,7 @@ export function RootLayout() {
                   </Avatar>
                   <div className="text-left">
                     <div className="text-sm font-medium">{user?.name || "User"}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {currentRole}
-                    </div>
+                    <div className="text-xs text-muted-foreground">{currentRole}</div>
                   </div>
                 </Button>
               </DropdownMenuTrigger>
@@ -304,13 +264,11 @@ export function RootLayout() {
           </div>
         </header>
 
-        {/* Page Content */}
         <main className="flex-1 overflow-y-auto bg-background p-6">
           <Outlet />
         </main>
       </div>
 
-      {/* AI Chatbot */}
       <AIChatbot />
     </div>
   );
