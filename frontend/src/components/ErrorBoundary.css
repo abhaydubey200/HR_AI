@@ -1,0 +1,44 @@
+.error-boundary-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    padding: var(--space-4);
+}
+
+.error-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--shadow-xl);
+}
+
+.error-icon {
+    color: var(--error);
+    margin-bottom: var(--space-4);
+    display: flex;
+    justify-content: center;
+}
+
+.error-card h2 {
+    margin-bottom: var(--space-2);
+    font-size: 1.5rem;
+    color: var(--text-primary);
+}
+
+.error-card p {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-6);
+    font-size: 0.95rem;
+}
+
+.error-actions {
+    display: flex;
+    justify-content: center;
+}
