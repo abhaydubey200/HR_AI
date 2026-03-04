@@ -34,6 +34,7 @@ import { TalentManagement } from "./pages/TalentManagement";
 import { HROperations } from "./pages/HROperations";
 import { Incentives } from "./pages/Incentives";
 import { ZonalSales } from "./pages/ZonalSales";
+import { Notifications } from "./pages/Notifications";
 
 export const router = createBrowserRouter([
   {
@@ -76,6 +77,7 @@ export const router = createBrowserRouter([
       { path: "audit", Component: AuditLogs },
       { path: "departments", Component: Departments },
       { path: "settings", Component: Settings },
+      { path: "notifications", Component: Notifications },
       { path: "dei", Component: DEI },
       { path: "ir", Component: IndustrialRelations },
       { path: "hris", Component: HRIS },
